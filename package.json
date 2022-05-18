@@ -1,0 +1,31 @@
+{
+  "name": "ep-speed-test",
+  "version": "0.0.0",
+  "description": "Speed test for Elastic Provider",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "run-p start:*",
+    "start:ipfs": "run-s start:ipfs:*",
+    "start:ipfs:clean": "rm -rf ./.ipfs",
+    "start:ipfs:init": "IPFS_PATH=./.ipfs ipfs init --profile=test",
+    "start:ipfs:configure": "IPFS_PATH=./.ipfs ipfs config Routing.Type none",
+    "start:ipfs:daemon": "IPFS_PATH=./.ipfs ipfs daemon",
+    "start:backup": "NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js"
+  },
+  "author": "Alan Shaw",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.92.0",
+    "@nftstorage/ipfs-cluster": "^5.0.1",
+    "@web-std/fetch": "^4.1.0",
+    "bytes": "^3.1.2",
+    "dotenv": "^16.0.1",
+    "it-ndjson": "^0.1.1",
+    "multiaddr-to-uri": "^8.0.0",
+    "npm-run-all": "^4.1.5",
+    "p-retry": "^5.1.1",
+    "pg": "^8.7.3",
+    "standard": "^17.0.0"
+  }
+}

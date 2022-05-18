@@ -1,0 +1,4 @@
+node_modules
+.env
+.ipfs
+*.log.ndjson
