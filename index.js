@@ -126,7 +126,7 @@ async function main () {
           console.log(`🗑 Garbage collected ${n} CIDs`)
 
           const swarm = await ipfs.swarmPeers()
-          for (const p of swarm.Peers) {
+          for (const p of swarm.Peers || []) {
             const addr = `${p.Addr}/p2p/${p.Peer}`
             console.log(`🔌 Disconnecting ${addr}`)
             await ipfs.swarmDisconnect(addr)

@@ -1,7 +1,7 @@
 {
   "name": "ep-speed-test",
   "version": "0.0.0",
-  "description": "Speed test for Elastic Provider",
+  "description": "Speed test for Elastic Provider vs IPFS Cluster",
   "main": "index.js",
   "type": "module",
   "scripts": {
