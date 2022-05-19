@@ -11,7 +11,7 @@
     "start:ipfs:init": "IPFS_PATH=./.ipfs ipfs init --profile=test",
     "start:ipfs:configure": "IPFS_PATH=./.ipfs ipfs config Routing.Type none",
     "start:ipfs:daemon": "IPFS_PATH=./.ipfs ipfs daemon",
-    "start:backup": "NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js"
+    "start:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js"
   },
   "author": "Alan Shaw",
   "license": "MIT",

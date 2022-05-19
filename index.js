@@ -5,6 +5,7 @@ import { Cluster } from '@nftstorage/ipfs-cluster'
 import retry from 'p-retry'
 import { fetch } from '@web-std/fetch'
 import fs from 'fs/promises'
+import path from 'path'
 import toUri from 'multiaddr-to-uri'
 import { IpfsClient } from './ipfs-client.js'
 import { ElasticProvider } from './elastic-provider.js'
@@ -38,7 +39,8 @@ async function main () {
   await db.connect()
   console.log('🐘 PostgreSQL connected')
 
-  const ipfsApiUrl = toUri(await retry(() => fs.readFile('./.ipfs/api', 'utf8'), { onFailedAttempt: console.error }))
+  const ipfsPath = process.env.IPFS_PATH || './.ipfs'
+  const ipfsApiUrl = toUri(await retry(() => fs.readFile(path.join(ipfsPath, 'api'), 'utf8')))
   const ipfs = new IpfsClient(ipfsApiUrl)
   const identity = await ipfs.id()
   console.log(`🪐 IPFS ready: ${identity.ID}`)
