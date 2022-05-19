@@ -100,10 +100,6 @@ async function main () {
             throw err
           }
 
-          // console.log('👯 Connected Peers:')
-          // const swarm = await ipfs.swarmPeers()
-          // swarm.Peers.forEach(p => console.log(`  ${p.Addr}/p2p/${p.Peer}`))
-
           console.log(`⤵️ Transferring ${cid} from ${peerId} (${bytes(parseInt(dagSize))})`)
           const start = Date.now()
           let receivedBytes = 0
@@ -127,8 +123,12 @@ async function main () {
           }
           console.log(`🗑 Garbage collected ${n} CIDs`)
 
-          console.log(`🔌 Disconnecting ${addr}`)
-          await ipfs.swarmDisconnect(addr)
+          const swarm = await ipfs.swarmPeers()
+          for (const p of swarm.Peers) {
+            const addr = `${p.Addr}/p2p/${p.Peer}`
+            console.log(`🔌 Disconnecting ${addr}`)
+            await ipfs.swarmDisconnect(addr)
+          }
         }
       }
     }
