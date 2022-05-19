@@ -14,7 +14,7 @@ How does it work?
 8. Connects the local node to the Elastic Provider node.
 9. Transfers the data and measures the speed.
 10. Disconnects from the Elastic Provider node.
-11. Writes the .
+11. Appends the result to the NDJSON log.
 12. GOTO 2.
 
 ## Usage
