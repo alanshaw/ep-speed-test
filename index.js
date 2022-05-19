@@ -105,7 +105,7 @@ async function main () {
           console.log(`⤵️ Transferring ${cid} from ${peerId} (${bytes(parseInt(dagSize))})`)
           const start = Date.now()
           let receivedBytes = 0
-          const logTransferRate = () => console.log(`${bytes(receivedBytes / ((Date.now() - start) / 1000))}/s`)
+          const logTransferRate = () => console.log(`⏱ ${bytes(receivedBytes / ((Date.now() - start) / 1000))}/s`)
           const intervalId = setInterval(logTransferRate, 10000)
           try {
             for await (const chunk of ipfs.dagExport(cid, { timeout: 10000 })) {
@@ -128,7 +128,7 @@ async function main () {
           const swarm = await ipfs.swarmPeers()
           for (const p of swarm.Peers || []) {
             const addr = `${p.Addr}/p2p/${p.Peer}`
-            console.log(`🔌 Disconnecting ${addr}`)
+            console.log(`🏁 Disconnecting ${addr}`)
             await ipfs.swarmDisconnect(addr)
           }
         }
