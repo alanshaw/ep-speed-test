@@ -16,6 +16,7 @@ dotenv.config()
 const FETCH_CONTENT_SQL = 'SELECT cid FROM content TABLESAMPLE SYSTEM(1) WHERE dag_size IS NOT NULL AND dag_size > $1 AND dag_size < $2 ORDER BY RANDOM() LIMIT $3'
 const MiB = 1024 * 1024
 const LIMIT = 1000
+const STALLED_TIMEOUT_DURATION = process.env.STALLED_TIMEOUT_DURATION || 1000 * 60 * 5;
 
 async function main () {
   const db = new pg.Client({ connectionString: mustGetEnv('DATABASE_CONNECTION') })
@@ -23,7 +24,12 @@ async function main () {
   console.log('🐘 PostgreSQL connected')
 
   const ipfsPath = process.env.IPFS_PATH || './.ipfs'
-  const ipfsApiUrl = toUri(await retry(() => fs.readFile(path.join(ipfsPath, 'api'), 'utf8')))
+  const ipfsApiUrl = toUri(await retry((count) => {
+    if (count >= 5) {
+      throw new Error('error reading IPFS_PATH, be sure `ipfs daemon` is running with your desired IPFS_PATH')
+    }
+    return fs.readFile(path.join(ipfsPath, 'api'), 'utf8');
+  }))
   const ipfs = new IpfsClient(ipfsApiUrl)
   const identity = await ipfs.id()
   console.log(`🪐 IPFS ready: ${identity.ID}`)
@@ -67,6 +73,10 @@ async function main () {
     const logTransferRate = () => console.log(`👉 ${bytes(receivedBytes)} @ ${bytes(receivedBytes / ((Date.now() - start) / 1000))}/s (${concurrentTransfers} current, ${succeededTransfers} successful, ${failedTransfers} failed)`)
     const intervalId = setInterval(logTransferRate, 10000)
     await Promise.all(wantlist.map(async cid => {
+      const stalledTimeout = setTimeout(() => {
+        console.log('cid stalled', cid);
+        clearTimeout(stalledTimeout);
+      }, STALLED_TIMEOUT_DURATION)
       concurrentTransfers++
       try {
         await retry(async () => {
@@ -80,6 +90,7 @@ async function main () {
         failedTransfers++
       } finally {
         concurrentTransfers--
+        clearTimeout(stalledTimeout)
       }
     }))
 
