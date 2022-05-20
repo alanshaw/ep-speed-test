@@ -64,15 +64,17 @@ async function main () {
     let concurrentTransfers = 0
     let succeededTransfers = 0
     let failedTransfers = 0
-    const logTransferRate = () => console.log(`⏱ ${bytes(receivedBytes / ((Date.now() - start) / 1000))}/s (${concurrentTransfers} current, ${succeededTransfers} successful, ${failedTransfers} failed)`)
+    const logTransferRate = () => console.log(`👉 ${bytes(receivedBytes)} @ ${bytes(receivedBytes / ((Date.now() - start) / 1000))}/s (${concurrentTransfers} current, ${succeededTransfers} successful, ${failedTransfers} failed)`)
     const intervalId = setInterval(logTransferRate, 10000)
     await Promise.all(wantlist.map(async cid => {
       concurrentTransfers++
       try {
-        for await (const chunk of ipfs.dagExport(cid, { timeout: 1000 * 60 * 30 })) {
-          receivedBytes += chunk.length
-        }
-        succeededTransfers++
+        await retry(async () => {
+          for await (const chunk of ipfs.dagExport(cid, { timeout: 1000 * 60 * 30 })) {
+            receivedBytes += chunk.length
+          }
+          succeededTransfers++
+        })
       } catch (err) {
         console.error(`❌ failed to transfer ${cid}`, err)
         failedTransfers++
