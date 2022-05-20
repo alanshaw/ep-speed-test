@@ -32,7 +32,7 @@ const sizes = [
   // [10 * GiB, 32 * GiB]
 ]
 
-const LIMIT = 250
+const LIMIT = 50
 
 async function main () {
   const db = new pg.Client({ connectionString: mustGetEnv('DATABASE_CONNECTION') })
@@ -64,7 +64,7 @@ async function main () {
     const limit = process.env.LIMIT ? parseInt(process.env.LIMIT) : LIMIT
     for (const [min, max] of sizes) {
       console.log(`🧪 Fetching samples between ${bytes(min)} and ${bytes(max)}`)
-      const res = await db.query(FETCH_CONTENT_SQL, [min, max, limit * 2])
+      const res = await db.query(FETCH_CONTENT_SQL, [min, max, limit])
       if (!res.rows.length) throw new Error('no rows')
 
       for (const { cid, dag_size: dagSize } of res.rows) {

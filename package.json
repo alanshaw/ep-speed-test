@@ -5,13 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "run-p start:*",
-    "start:ipfs": "run-s start:ipfs:*",
-    "start:ipfs:clean": "rm -rf ./.ipfs",
-    "start:ipfs:init": "IPFS_PATH=./.ipfs ipfs init --profile=test",
-    "start:ipfs:configure": "IPFS_PATH=./.ipfs ipfs config Routing.Type none",
-    "start:ipfs:daemon": "IPFS_PATH=./.ipfs ipfs daemon",
-    "start:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js"
+    "start": "npm run speed-test",
+    "ipfs": "run-s ipfs:*",
+    "ipfs:clean": "rm -rf ./.ipfs",
+    "ipfs:init": "IPFS_PATH=./.ipfs ipfs init --profile=test",
+    "ipfs:configure": "IPFS_PATH=./.ipfs ipfs config Routing.Type none",
+    "ipfs:daemon": "IPFS_PATH=./.ipfs ipfs daemon",
+    "speed-test": "run-p ipfs speed-test:run",
+    "speed-test:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js",
+    "bandwidth-test": "run-p ipfs bandwidth-test:run",
+    "bandwidth-test:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node bandwidth.js"
   },
   "author": "Alan Shaw",
   "license": "MIT",

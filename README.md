@@ -44,3 +44,7 @@ Start the speed test:
 ```sh
 npm start
 ```
+
+## Notes
+
+A good and simple tool to convert NDJSON to JSON: https://observablehq.com/@iosonosempreio/ndjson-sorceress
