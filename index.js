@@ -11,6 +11,7 @@ import { IpfsClient } from './ipfs-client.js'
 import { ElasticProvider } from './elastic-provider.js'
 import CLUSTER_PEER_ADDRS from './cluster-peer-addrs.js'
 import { Logger } from './logger.js'
+import { mustGetEnv } from './util.js'
 
 global.fetch = fetch
 
@@ -137,15 +138,6 @@ async function main () {
   } finally {
     await db.end()
   }
-}
-
-/**
- * @param {string} name
- */
-function mustGetEnv (name) {
-  const value = process.env[name]
-  if (!value) throw new Error(`missing ${name} environment variable`)
-  return value
 }
 
 function randomInt (min, max) {

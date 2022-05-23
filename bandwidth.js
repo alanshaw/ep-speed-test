@@ -8,6 +8,7 @@ import path from 'path'
 import toUri from 'multiaddr-to-uri'
 import { IpfsClient } from './ipfs-client.js'
 import { ElasticProvider } from './elastic-provider.js'
+import { mustGetEnv } from './util.js'
 
 global.fetch = fetch
 
@@ -88,15 +89,6 @@ async function main () {
   } finally {
     await db.end()
   }
-}
-
-/**
- * @param {string} name
- */
-function mustGetEnv (name) {
-  const value = process.env[name]
-  if (!value) throw new Error(`missing ${name} environment variable`)
-  return value
 }
 
 main().then(() => console.log('✅ Done')).catch(console.error)
