@@ -25,7 +25,7 @@ async function main () {
     throw new Error(`missing or invalid root CID argument: ${process.argv[2]}`, { cause: err })
   }
 
-  const blockstore = s3CarReader.read(root)
+  const blockstore = await s3CarReader.read(root)
 
   await walkDag(root, blockstore)
   console.log(`✅ ${root} is a complete DAG on S3`)
