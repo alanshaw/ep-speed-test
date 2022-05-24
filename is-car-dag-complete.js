@@ -2,12 +2,15 @@ import { S3Client, ListObjectsV2Command, HeadObjectCommand, GetObjectCommand } f
 import { CID } from 'multiformats'
 import * as raw from 'multiformats/codecs/raw'
 import * as dagPB from '@ipld/dag-pb'
-import { CarReader, CarBlockIterator } from '@ipld/car'
+import { CarReader } from '@ipld/car'
+import * as assert from 'assert'
+import debug from 'debug'
+import dotenv from 'dotenv'
 import { mustGetEnv } from './util.js'
-import * as assert from "assert";
-import debug from "debug";
 
-const debugLog = debug('elastic-ipfs');
+const debugLog = debug('elastic-ipfs')
+
+dotenv.config()
 
 /**
  * @typedef {Map<string, import('@ipld/car/api').Block>} Blockstore
@@ -30,7 +33,7 @@ async function main () {
   }
 
   const blockstore = await s3CarReader.read(root)
-  assert.ok(blockstore.size >= 1, 'expected carReader read() returned blockstore to have at least 1 block');
+  assert.ok(blockstore.size >= 1, 'expected carReader read() returned blockstore to have at least 1 block')
   await walkDag(root, blockstore)
   console.log(`✅ ${root} is a complete DAG on S3`)
 }
@@ -77,22 +80,19 @@ export class S3CarReader {
    * @param {CID} cid
    */
   async _getCarPaths (cid) {
-    const carPaths = []
     const subPaths = await this._listObjects(`raw/${cid}`)
-    for (const subPath of subPaths) {
-      const carFilePath = subPath.Key;
-      assert.ok(/\.car$/.test(carFilePath));
-      carPaths.push(carFilePath)
-    }
-
+    const carPaths = subPaths.map(p => p.Key).filter(k => k.endsWith('.car'))
     const completePath = `complete/${cid}.car`
     if (await this._headObject(completePath)) {
       carPaths.push(completePath)
     }
-
     return carPaths
   }
 
+  /**
+   * @private
+   * @param {string} key
+   */
   async _headObject (key) {
     const command = new HeadObjectCommand({
       Bucket: this._bucketName,
@@ -106,18 +106,21 @@ export class S3CarReader {
     }
   }
 
+  /**
+   * @private
+   * @param {string} path
+   */
   async _listObjects (path) {
     const command = new ListObjectsV2Command({
       Bucket: this._bucketName,
-      Prefix: path,
-      MaxKeys: 1
+      Prefix: path
     })
     const response = await this._s3.send(command)
     return response.Contents
   }
 
   /**
-   * read a car file from s3 path and write its blocks to the provided blockstore
+   * Read a car file from s3 path and write its blocks to the provided blockstore.
    * @private
    * @param {string} path
    * @param {Blockstore} blockstore
@@ -125,15 +128,15 @@ export class S3CarReader {
   async _readCar (path, blockstore) {
     const getCarCommand = new GetObjectCommand({
       Bucket: this._bucketName,
-      Key: path,
+      Key: path
     })
     const response = await this._s3.send(getCarCommand)
-    const responseCarReader = await CarReader.fromIterable(response.Body);
+    const responseCarReader = await CarReader.fromIterable(response.Body)
     const roots = await responseCarReader.getRoots()
-    debugLog('_readCar read car', { roots, blocks: responseCarReader.blocks() });
+    debugLog('_readCar read car', { roots, blocks: responseCarReader.blocks() })
     for await (const block of responseCarReader.blocks()) {
       debugLog('_readCar writing to blockstore', block.cid.toString())
-      blockstore.set(block.cid.toString(), block);
+      blockstore.set(block.cid.toString(), block)
     }
     return blockstore
   }
@@ -147,9 +150,9 @@ export async function walkDag (root, blockstore) {
   let nextCids = [root]
   while (true) {
     const nextCid = nextCids.shift()
-    debugLog('walkDag iter', nextCid.toString())
     if (!nextCid) return
-    const blockstoreKey = nextCid.toString();
+    debugLog('walkDag iter', nextCid.toString())
+    const blockstoreKey = nextCid.toString()
     const block = blockstore.get(blockstoreKey)
     if (!block) throw new Error(`missing block: ${blockstoreKey}`)
 
