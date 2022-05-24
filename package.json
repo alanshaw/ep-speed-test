@@ -14,7 +14,9 @@
     "speed-test": "run-p ipfs speed-test:run",
     "speed-test:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node index.js",
     "bandwidth-test": "run-p ipfs bandwidth-test:run",
-    "bandwidth-test:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node bandwidth.js"
+    "bandwidth-test:run": "IPFS_PATH=./.ipfs NODE_TLS_REJECT_UNAUTHORIZED=0 node bandwidth.js",
+    "can-bitswap": "run-p ipfs \"can-bitswap:run -- {1}\" --",
+    "can-bitswap:run": "IPFS_PATH=./.ipfs node can-bitswap.js"
   },
   "author": "Alan Shaw",
   "license": "MIT",

@@ -45,6 +45,28 @@ Start the speed test:
 npm start
 ```
 
+### Other scripts
+
+#### Check if a DAG is complete in S3
+
+1. Read all CAR files pertaining to the CID from S3
+2. Add the blocks to an in memory blockstore
+3. Walk the DAG to ensure completeness
+
+```sh
+node is-car-dag-complete.js bafybeih6qj6w3kfesrhy5gxo2lvph2p4uvpl7sq3u2rorvjaooqngqwa5y
+```
+
+#### Check if Elastic Provider can transfer a given CID
+
+1. Start a local IPFS node
+2. Connect to the Elastic Provider node
+2. Transfer a given CID
+
+```sh
+npm run can-bitswap -- bafybeih6qj6w3kfesrhy5gxo2lvph2p4uvpl7sq3u2rorvjaooqngqwa5y
+```
+
 ## Notes
 
 A good and simple tool to convert NDJSON to JSON: https://observablehq.com/@iosonosempreio/ndjson-sorceress
