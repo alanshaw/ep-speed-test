@@ -25,6 +25,7 @@
     "@nftstorage/ipfs-cluster": "^5.0.1",
     "@web-std/fetch": "^4.1.0",
     "bytes": "^3.1.2",
+    "debug": "^4.3.4",
     "dotenv": "^16.0.1",
     "it-ndjson": "^0.1.1",
     "multiaddr-to-uri": "^8.0.0",
